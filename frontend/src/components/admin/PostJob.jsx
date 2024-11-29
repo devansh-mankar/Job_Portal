@@ -27,7 +27,7 @@ export default function PostJob() {
     description: "",
     requirements: "",
     salary: "",
-    experienceLevel: "",
+    experience: "",
     location: "",
     jobType: "",
     position: 0,
@@ -54,21 +54,44 @@ export default function PostJob() {
   const submitHandler = async (e) => {
     e.preventDefault();
     console.log(input);
+
+    if (
+      !input.title ||
+      !input.description ||
+      !input.requirements ||
+      !input.salary ||
+      !input.experience || // Keep this field consistent
+      !input.location ||
+      !input.jobType ||
+      !input.position ||
+      !input.companyId
+    ) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
+
     try {
       setLoading(true);
-      console.log(input);
-      const res = await axios.post(`${JOB_API_ENDPOINT}/post`, input, {
-        headers: {
-          "Content-Type": "application/json",
+      const res = await axios.post(
+        `${JOB_API_ENDPOINT}/post`,
+        {
+          ...input,
+          // Explicitly map experience to experienceLevel
         },
-        withCredentials: true,
-      });
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
       if (res.data.success) {
         toast.success(res.data.message);
         navigate("/admin/jobs");
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      console.log(error.response);
+      toast.error(error.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -160,9 +183,9 @@ export default function PostJob() {
                   <Label className="text-slate-400">Experience</Label>
                   <Input
                     type="text"
-                    name="experienceLevel"
+                    name="experience"
                     placeholder="Enter the years of experience"
-                    value={input.experienceLevel}
+                    value={input.experience}
                     onChange={changeEventHandler}
                     className="border-green-500 focus:ring focus:ring-green-400 text-gray-400"
                   />

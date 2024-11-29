@@ -9,6 +9,7 @@ export default function useGetCompanyById(companyId) {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    console.log(companyId);
     const fetchSingleCompany = async () => {
       try {
         const res = await axios.get(
